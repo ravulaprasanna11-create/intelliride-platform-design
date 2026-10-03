@@ -1,7 +1,8 @@
 import IntelliRideDashboard from '@/components/intelliride-dashboard'
+import { AuthGate, AuthProvider } from '@/auth/auth-context'
 
 export default function Page() {
-  return <IntelliRideDashboard />
+  return <AuthProvider><AuthGate><IntelliRideDashboard /></AuthGate></AuthProvider>
 }
 
 // Frontend-only demo surface. Backend services can replace the mock actions later.
