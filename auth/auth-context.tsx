@@ -32,10 +32,16 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
   const [path, setPath] = useState(() => typeof window === 'undefined' ? '/login' : window.location.pathname)
   useEffect(() => { const onPop = () => setPath(window.location.pathname); window.addEventListener('popstate', onPop); return () => window.removeEventListener('popstate', onPop) }, [])
+  const target = user ? getWorkspaceForRole(user.role) : null
+  const allowed = !user || path === target || path === '/'
+  useEffect(() => {
+    if (user && target && !allowed) {
+      window.history.replaceState({}, '', target)
+      setPath(target)
+    }
+  }, [allowed, target, user])
   if (!user) return <LoginScreen />
-  const target = getWorkspaceForRole(user.role)
-  const allowed = path === target || path === '/'
-  if (!allowed) { window.history.replaceState({}, '', target); return null }
+  if (!allowed) return null
   return <>{children}</>
 }
 
